@@ -150,3 +150,8 @@ select concat(Fname, ' ', Lname) as Employee from employee;
 
 -- Criar porcentagem de INSS baseado no salario, usando alias (para dar nome ao INSS) e round (para deiar decimal)
 select Fname, Lname, Salary, round(Salary*0.011,2) as INSS from employee;
+
+-- Definir um aumento de salário para os que trabalham associado ao produtoX
+select concat(Fname,' ',Lname) as Complete_name, Salary, round(Salary*1.1,2) as increased_salary
+			  from employee as e, works_on as w, project as p
+			  where (e.Ssn = w.Essn and w.Pno = p.Pnumber and p.Pname = 'ProductX');
