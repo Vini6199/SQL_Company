@@ -3,90 +3,90 @@ use company_constraints;
 
 create table employee(
 	fname varchar(15) not null,
-    minit char,
-    Lname varchar(15) not null,
-    Ssn char(9),
-    Bdate date,
-    Address varchar(30),
-    sex char,
-    Salary decimal(10,2),
-    -- referencia o Ssn de gerentes em outros empregados:
-    Super_ssn char(9),
-    Dno int not null,
-    constraint chk_salary_employee check(Salary> 2000.0),
-    constraint pk_employee primary key(Ssn)
+	minit char,
+	Lname varchar(15) not null,
+	Ssn char(9),
+	Bdate date,
+	Address varchar(30),
+	sex char,
+	Salary decimal(10,2),
+	-- referencia o Ssn de gerentes em outros empregados:
+	Super_ssn char(9),
+	Dno int not null,
+	constraint chk_salary_employee check(Salary> 2000.0),
+	constraint pk_employee primary key(Ssn)
 );
 
 create table department(
 	Dname varchar(15) not null,
-    Dnumber int not null,
-    Mgr_ssn char(9),
-    Mgr_start_date date,
-    Dept_create_date date,
-    -- verificar se a data que o gerente começou é maior que criação do departamento, que seria erro:
-    constraint chk_date_dept check (Dept_create_date< Mgr_start_date),
-    constraint pk_dept primary key(Dnumber),
+    	Dnumber int not null,
+    	Mgr_ssn char(9),
+    	Mgr_start_date date,
+    	Dept_create_date date,
+    	-- verificar se a data que o gerente começou é maior que criação do departamento, que seria erro:
+    	constraint chk_date_dept check (Dept_create_date< Mgr_start_date),
+    	constraint pk_dept primary key(Dnumber),
 	constraint unique_name_department Unique(Dname),
-    foreign key (Mgr_ssn) references employee(Ssn)
+    	foreign key (Mgr_ssn) references employee(Ssn)
 );
 
 
 create table dept_locations(
 	Dnumber int not null,
-    Dlocation varchar(15) not null,
-    constraint pk_dept_location primary key (Dnumber, Dlocation),
-    constraint fk_dept_location foreign key (Dnumber) references department (Dnumber)    
+    	Dlocation varchar(15) not null,
+    	constraint pk_dept_location primary key (Dnumber, Dlocation),
+    	constraint fk_dept_location foreign key (Dnumber) references department (Dnumber)    
 );
 
 create table project(
 	Pname varchar(15) not null,
-    Pnumber int not null,
-    Plocation varchar(15),
-    Dnum int not null,
-    primary key (Pnumber),
-    constraint unique_project unique (Pname),
-    constraint fk_project foreign key (Dnum) references department(Dnumber)
+    	Pnumber int not null,
+    P	location varchar(15),
+    	Dnum int not null,
+    	primary key (Pnumber),
+    	constraint unique_project unique (Pname),
+    	constraint fk_project foreign key (Dnum) references department(Dnumber)
 );
 
 create table works_on(
 	Essn char(9) not null,
-    Pno int not null,
-    Hours decimal(3,1) not null,
-    primary key (Essn, Pno),
-    constraint fk_employee_works_on foreign key (Essn) references employee (Ssn),
-    constraint fk_projects_works_on foreign key (Pno) references project (Pnumber)
+        Pno int not null,
+        Hours decimal(3,1) not null,
+        primary key (Essn, Pno),
+        constraint fk_employee_works_on foreign key (Essn) references employee (Ssn),
+        constraint fk_projects_works_on foreign key (Pno) references project (Pnumber)
 );
 
 create table dependent(
 	Essn char(9) not null,
-    Dependent_name varchar(15) not null,
-    Sex char ,
-    Bdate date,
-    Relationship varchar(8),
-    primary key (Essn, dependent_name),
-    constraint fk_dependent foreign key(Essn) references employee(Ssn)
+        Dependent_name varchar(15) not null,
+        Sex char ,
+        Bdate date,
+        Relationship varchar(8),
+        primary key (Essn, dependent_name),
+        constraint fk_dependent foreign key(Essn) references employee(Ssn)
 );
 
 alter table employee
-	add constraint fk_employee
-    foreign key(Super_ssn) references employee(Ssn)
-    on delete set null
-    on update cascade;
+add constraint fk_employee
+foreign key(Super_ssn) references employee(Ssn)
+on delete set null
+on update cascade;
     
 -- modificar constraint: drop e add:
 alter table department drop constraint department_ibfk_1;
 alter table department 
-	add constraint fk_department foreign key(Mgr_ssn) references employee(Ssn)
-    on update cascade,
-    add Mgr_start_date date,
-    add Dept_create_date date;
+add constraint fk_department foreign key(Mgr_ssn) references employee(Ssn)
+on update cascade,
+add Mgr_start_date date,
+add Dept_create_date date;
     
 alter table dept_locations drop constraint fk_dept_locations;
 
 alter table dept_locations
-	add constraint fk_dept_locations foreign key(Dnumber) references department(Dnumber)
-    on delete cascade
-    on update cascade;
+add constraint fk_dept_locations foreign key(Dnumber) references department(Dnumber)
+on delete cascade
+on update cascade;
 
 select * from information_schema.table_constraints
 where constraint_schema = 'company_constraints';
@@ -102,31 +102,31 @@ insert into employee values ('Rosana','J','Morrow',444555999,'1978-06-15','88-Ch
 select * from employee;
 
 insert into dependent values (123456789,'Alice','F','1999-04-05','Daughter'),
-						(887654321,'Theodore','M','1998-06-23','Brother'),
-                        (444555999,'Jessy','F','2001-02-01','Son');
+			     (887654321,'Theodore','M','1998-06-23','Brother'),
+                             (444555999,'Jessy','F','2001-02-01','Son');
                         
 select * from dependent;
 
 insert into department values ('Research',5,123456789,'1990-05-22','1990-05-22'),
-						 ('Administration',4,887654321,'2020-05-22','1990-05-22');
+			      ('Administration',4,887654321,'2020-05-22','1990-05-22');
                          
 select * from department;
 
 insert into dept_locations values ('5','Houston'),
-								  ('4','Florida');
+				  ('4','Florida');
                                   
 select * from dept_locations;
 
 insert into project values ('ProductX','1','Houston','5'),
-						   ('ProductY','2','Houston','5'),
+			   ('ProductY','2','Houston','5'),
                            ('ProductV','3','Florida','4'),
                            ('ProductZ','4','Houston','4');
 
 select * from project;
 
 insert into works_on values ('123456789','1',10.0),
-								  ('887654321','2',10.0),
-                                  ('444555999','1',8.0);
+			    ('887654321','2',10.0),
+                            ('444555999','1',8.0);
 								
 desc works_on;
 
@@ -147,3 +147,6 @@ select Fname, Lname, Address from employee, department
     
 -- Juntar informações, nesse caso, concatenar os nomes e dar nome à essa nova tabela:
 select concat(Fname, ' ', Lname) as Employee from employee;
+
+-- Criar porcentagem de INSS baseado no salario, usando alias (para dar nome ao INSS) e round (para deiar decimal)
+select Fname, Lname, Salary, round(Salary*0.011,2) as INSS from employee;
