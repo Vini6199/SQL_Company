@@ -155,3 +155,34 @@ select Fname, Lname, Salary, round(Salary*0.011,2) as INSS from employee;
 select concat(Fname,' ',Lname) as Complete_name, Salary, round(Salary*1.1,2) as increased_salary
 			  from employee as e, works_on as w, project as p
 			  where (e.Ssn = w.Essn and w.Pno = p.Pnumber and p.Pname = 'ProductX');
+
+-- like e between
+select concat(Fname, ' ',Lname) Complete_Name, Dname as Department_Name, Address from employee, department
+		where (Address like '%Florida%');
+        
+select Fname, Lname, Salary from employee where( Salary between 10000 and 40000);
+
+select distinct Pnumber from project
+		where Pnumber in
+        (select distinct Pnumber from project, department, employee where
+        Mgr_ssn = Ssn and Lname = 'Smith' and Dnum = Dnumber)
+        or
+        (select distinct Pno from works_on, employee
+			where (Essn = Ssn and Lname = 'Smith'));
+            
+-- Cláusulas com exists
+
+-- Quais employees possuem dependentes?
+select e.Fname, e.Lname from employee as e, department as d 
+	where (e.Ssn = d.Mgr_ssn) and
+    exists (select * from dependent as d where e.Ssn = d.Essn);
+  
+-- Setando atributos a partir de condições com CASE
+update employee set Salary =
+		case 
+			when Dno = 5 then Salary + 2000
+            when Dno = 4 then Salary + 1500
+			else Salary + 0
+		end;
+        
+select Fname, Salary, Dno from employee;
