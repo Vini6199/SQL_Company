@@ -185,4 +185,32 @@ update employee set Salary =
 	  else Salary + 0
 	end;
         
-select Fname, Salary, Dno from employee;
+-- JOIN ON --> INNER JOIN
+select distinct * from employee join works_on on Ssn = Essn;
+select distinct * from employee join department on Ssn = Mgr_ssn;
+
+select Fname, Lname, Address 
+		from (employee join department on Dno = Dnumber)
+        where Dname = 'Administration';
+
+-- INNER JOIN com ALIAS e ORDER BY
+select Dname as Department, Dept_create_date as Start_Date, Dlocation as Location
+	from department inner join dept_locations using(Dnumber)
+    order by Start_Date;
+
+-- CROSS JOIN -- Produto Cartesiano
+select * from employee cross join dependent;
+
+-- project, works_on e employee 
+select concat(Fname,' ',Lname) as Complete_name, Dno as Dept_Number, Pname as Project_name,
+		Pno as Project_Number, Plocation as Location from employee
+        inner join works_on on Ssn = Essn
+        inner join project on Pno = Pnumber
+        where Pname like '%Product%'
+        order by Pnumber;
+        
+-- department, dept_locations, employee
+select Dnumber, Dname, concat(Fname,' ', Lname) as Manager, Salary, round(Salary*0.05,2) as Bonus from department
+	inner join dept_locations using(Dnumber)
+    inner join employee on Ssn = Mgr_ssn
+    group by Dnumber;
