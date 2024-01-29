@@ -213,3 +213,6 @@ select Dnumber, Dname, concat(Fname,' ', Lname) as Manager, Salary, round(Salary
 	inner join dept_locations using(Dnumber)
     	inner join employee on Ssn = Mgr_ssn
     	group by Dnumber;
+
+-- OUTER JOIN
+select * from employee right outer join dependent on Ssn = Essn;
